@@ -1,50 +1,56 @@
 import streamlit as st
+import pandas as pd
 
 # 1. Page Title & Styling
-st.set_page_config(page_title="AI Heart Health Simulator", page_icon="🫀")
-st.title("🫀 AI Heart Health Simulator")
-st.write("Adjust the 5 medical metrics in the sidebar to simulate an AI diagnostic scan.")
+st.set_page_config(page_title="AI Advanced CardioPredict Engine", page_icon="🫀")
+st.title("🫀 AI Advanced CardioPredict Engine")
+st.write("Class 11 Biology Project: Integrating Predictive AI with Human Hemodynamics.")
 
-# 2. Sidebar Inputs (Upgraded to 5 Questions)
-st.sidebar.header("📋 Patient Health Profile")
-age = st.sidebar.slider("1. Patient Age", 18, 90, 30)
-bp = st.sidebar.slider("2. Blood Pressure (Systolic mmHg)", 90, 180, 120)
+# 2. Sidebar Inputs (Advanced Metrics)
+st.sidebar.header("📋 Patient Clinical Metrics")
+age = st.sidebar.slider("1. Patient Age", 18, 90, 17)
+bp = st.sidebar.slider("2. Systolic Blood Pressure (mmHg)", 90, 180, 120)
 cholesterol = st.sidebar.slider("3. Total Cholesterol (mg/dL)", 120, 300, 180)
-exercise = st.sidebar.slider("4. Weekly Exercise (Hours)", 0, 15, 4)
+heart_rate = st.sidebar.slider("4. Resting Heart Rate (BPM)", 50, 120, 72)
 smoking = st.sidebar.selectbox("5. Smoking Status", ["Never Smoked", "Active Smoker"])
 
-# 3. Calculation Brain (Weighted Point Matrix)
-risk = 10  # Starting baseline risk
+# 3. Scientific Calculations (Class 11 Biology Curriculum)
+stroke_volume = 70 # Average mL per beat
+cardiac_output_mL = heart_rate * stroke_volume
+cardiac_output_L = round(cardiac_output_mL / 1000, 2)
 
-if age > 50:
-    risk += 15
-if bp >= 130:
-    risk += 25
-if cholesterol >= 200:
-    risk += 20
-if exercise < 3:
-    risk += 15  # Sedentary lifestyle increases vulnerability
-if smoking == "Active Smoker":
-    risk += 25
+# AI Weighted Risk Logic
+age_risk = 15 if age > 50 else 0
+bp_risk = 30 if bp >= 130 else 0
+chol_risk = 20 if cholesterol >= 200 else 0
+hr_risk = 15 if (heart_rate > 90 or heart_rate < 60) else 0
+smoke_risk = 20 if smoking == "Active Smoker" else 0
 
-# Keep the score safely scaled between 5% and 95%
-final_risk = min(max(risk, 5), 95)
+total_risk = min(max(5 + age_risk + bp_risk + chol_risk + hr_risk + smoke_risk, 5), 95)
 
 # 4. Display Live Results Dashboard
-st.subheader("📊 Live AI Diagnostic Analysis")
-st.metric(label="Calculated Cardiovascular Risk Score", value=f"{final_risk}%")
+st.subheader("📊 Live AI Hemodynamic Analysis")
 
-if final_risk < 40:
-    st.success("🟢 Low Risk Level: AI predicts an optimal heart health profile.")
-elif final_risk <= 70:
-    st.warning("🟡 Moderate Risk Level: AI flags early arterial stress indicators. Modifications recommended.")
-else:
-    st.error("🔴 High Risk Level: AI flags critical vulnerabilities. Clinical evaluation strongly advised.")
+col1, col2 = st.columns(2)
+with col1:
+    st.metric(label="Calculated Cardiovascular Risk Score", value=f"{total_risk}%")
+with col2:
+    st.metric(label="Calculated Cardiac Output (L/min)", value=f"{cardiac_output_L} L", delta="Normal: 5.0L" if 4.5 <= cardiac_output_L <= 5.5 else "Abnormal Flow")
 
-# 5. Techfest Insight Segment
+# 5. Visual Interactive Chart
+st.write("### 📉 Multi-Factor Risk Vector Analysis")
+risk_data = {
+    "Risk Factor": ["Age Impact", "Blood Pressure", "Cholesterol", "Heart Rate Strain", "Toxin Exposure"],
+    "Severity Score": [age_risk, bp_risk, chol_risk, hr_risk, smoke_risk]
+}
+df = pd.DataFrame(risk_data)
+st.bar_chart(data=df, x="Risk Factor", y="Severity Score", color="#ff4b4b")
+
+# 6. Class 11 Curriculum Corner
 st.write("---")
-st.markdown("""
-### 💡 How the AI Processes This Data
-* **Feature Weights:** The underlying code simulates a neural network, applying heavy statistical weights to high blood pressure and smoking due to physical arterial wall friction.
-* **Predictive Care:** Instead of waiting for a clinical event, future wearable tools use these multi-factor patterns to warn physicians years in advance.
-""")
+with st.expander("🔬 Class 11 NCERT Biology Insights (Click to Expand)"):
+    st.markdown("""
+    * **Cardiac Output:** Calculated live above ($CO = HR \\times SV$). Normal resting output is roughly 5 Liters per minute.
+    * **Hypertension:** Sustained blood pressure above 140/90 mmHg leads to hypertension, causing vital organ damage and forcing the cardiac muscles to work harder.
+    * **Atherosclerosis:** High cholesterol values ($>200$ mg/dL) simulate the deposition of lipids/plaque inside the lumen of arteries, narrowing the passage and spiking blood velocity.
+    """)
